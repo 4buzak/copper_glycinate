@@ -253,12 +253,18 @@
 
   const cubes = (pts) => pts.map(([x, y, a]) =>
     `<rect x="${x}" y="${y}" width="24" height="22" rx="5" transform="rotate(${a} ${x + 12} ${y + 11})" fill="#fff" stroke="#8fbfe0" stroke-width="2.5"/>`).join('');
-  const iceBack = (x, w) => `<rect x="${x}" y="300" width="${w}" height="98" rx="12" fill="#e2f3ff" stroke="${OL}" stroke-width="4"/>`;
-  const iceFront = (x, w) =>
-    `<rect x="${x + 3}" y="314" width="${w - 6}" height="81" rx="10" fill="#9fd3f5" opacity=".45"/>
-     <path d="M${x + 6} 314 H${x + w - 6}" stroke="#fff" stroke-width="3" opacity=".8"/>
-     <rect x="${x}" y="300" width="${w}" height="98" rx="12" fill="none" stroke="${OL}" stroke-width="4"/>
-     ${cubes([[x + 10, 304, -12], [x + 30, 320, 18], [x + w - 36, 305, 14], [x + w - 56, 322, -20], [x + w / 2 - 12, 318, 8]])}`;
+  // 250 mL 비커 얼음물 (폭 240, 높이 208, 바닥 y=398)
+  const iceBack = (x, w = 240) =>
+    `<rect x="${x + 2}" y="194" width="${w - 4}" height="202" rx="16" fill="#fff" opacity=".45"/>
+     <rect x="${x + 5}" y="300" width="${w - 10}" height="94" rx="12" fill="#e2f3ff"/>`;
+  const iceFront = (x, w = 240) =>
+    `<rect x="${x + 5}" y="300" width="${w - 10}" height="94" rx="12" fill="#9fd3f5" opacity=".4"/>
+     <path d="M${x + 8} 300 H${x + w - 8}" stroke="#fff" stroke-width="3" opacity=".8"/>
+     ${cubes([[x + 8, 290, -12], [x + 10, 316, 18], [x + w - 34, 292, 14], [x + w - 33, 322, -20], [x + w / 2 - 30, 290, 8], [x + w / 2 + 10, 294, -10]])}
+     <path d="M${x} 190 V382 Q${x} 398 ${x + 16} 398 H${x + w - 16} Q${x + w} 398 ${x + w} 382 V190" fill="none" stroke="${OL}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+     <path d="M${x + 14} 210 V370" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".85"/>
+     <path d="M${x + w - 24} 240 H${x + w - 4} M${x + w - 16} 270 H${x + w - 4} M${x + w - 24} 300 H${x + w - 4} M${x + w - 16} 330 H${x + w - 4}" stroke="${OL}" stroke-width="2.5" opacity=".45"/>
+     <text x="${x + w - 30}" y="214" font-size="14" text-anchor="end" style="fill:#5c6270">250 mL</text>`;
 
   const FLASK = 'M382 250 V290 L312 384 Q304 398 322 398 H478 Q496 398 488 384 L418 290 V250';
   const filterRig = (inside = '', onPaper = '') =>
@@ -339,11 +345,10 @@
     ${item(400, 135, .4, `<g transform="translate(0 10)">${washBottle('#3a86ff', 'H₂O')}</g>`, '증류수', '7.5 mL + 5 mL')}
     ${item(550, 135, .55, `<g transform="translate(0 4)">${bottle}</g>`, '1-프로판올', '12 mL')}
     ${item(700, 135, .7, `<g transform="translate(0 10)">${washBottle('#ff9f1c', '아세톤')}</g>`, '아세톤', '세척용')}
-    ${item(100, 318, .9, miniBeaker(-24, liq(GLY_SOL, 136)) + miniBeaker(24, liq(CUAC_SOL, 128)), '100 mL 비커', '2개')}
+    ${item(100, 318, .9, miniBeaker(-24, liq(GLY_SOL, 136)) + miniBeaker(24, liq(CUAC_SOL, 128)), '50 mL 비커', '2개')}
     ${item(250, 318, 1.05, `<g transform="translate(-50 2) scale(.5)">${hotplate(0, 0, 200)}</g>
        <rect x="-6" y="-48" width="7" height="58" rx="3.5" transform="rotate(25 0 -20)" fill="#e8f4ff" stroke="${OL}" stroke-width="2.5"/>`, '가열판', '유리막대')}
-    ${item(400, 318, 1.2, `<g transform="translate(-60 -40) scale(.5)">${iceBack(0, 240).replace('y="300"', 'y="80"')}</g>
-       <g transform="translate(-60 -40) scale(.5)"><rect x="3" y="94" width="234" height="81" rx="10" fill="#9fd3f5" opacity=".5"/>${cubes([[20, 84, -12], [70, 100, 18], [130, 86, 14], [180, 104, -20]])}</g>`, '얼음물', '얼음 수조')}
+    ${item(400, 318, 1.2, miniBeaker(0, liq('#bfe3ff', 64, '', .85) + cubes([[18, 54, -12], [62, 66, 18], [108, 52, 14]]), .5), '얼음물', '250 mL 비커')}
     ${item(550, 318, 1.35, `<g transform="scale(.3) translate(-400 -280)">${filterRig()}</g>`, '감압 여과 장치', '부흐너 깔때기')}
     ${item(700, 318, 1.5, `<g transform="translate(0 -12) scale(.55)">${goggles}</g><g transform="translate(0 32) scale(.42)">${glove()}</g>`, '보안경 · 장갑')}`;
 
@@ -355,7 +360,7 @@
   };
   const s2 = `
     ${table()}
-    <g class="pop" ${st(0)}>${pill(210, 24, 380, 52, '#fff', '100 mL 비커에 각각 넣기', 21)}</g>
+    <g class="pop" ${st(0)}>${pill(210, 24, 380, 52, '#fff', '50 mL 비커에 각각 넣기', 21)}</g>
     ${beaker(130, 230, `
       <g class="drop" ${st(.3, '--dy:-200px')}>${pile(80, 162, CUAC)}</g>
       ${liq(CUAC_SOL, 128, `class="fi" ${st(2.2)}`, .75)}`)}
@@ -431,12 +436,12 @@
       </path>
       <text x="418" y="56" font-size="20" text-anchor="middle">실온에서 5분</text>
     </g>
-    <g class="fi" ${st(2.2)}>${iceBack(260, 280)}</g>
+    <g class="fi" ${st(2.2)}>${iceBack(280)}</g>
     ${beaker(320, 230, `
       ${liq(PROD_SOL, 100, '', .92)}
       ${crystals(0, 9, 3.4, .25)}`)}
-    <g class="fi" ${st(2.2)}>${iceFront(260, 280)}</g>
-    <g class="pop" ${st(2.0)}>${pill(300, 92, 200, 42, '#bde0fe', '→ 얼음물에 담그기', 18)}</g>
+    <g class="fi" ${st(2.2)}>${iceFront(280)}</g>
+    <g class="pop" ${st(2.0)}>${pill(250, 92, 300, 42, '#bde0fe', '→ 얼음물(250 mL 비커)에 담그기', 18)}</g>
     ${sparkle(300, 360, 4.4, .7)}${sparkle(505, 350, 4.7, .6)}
     <g class="pop" ${st(5.4)}>${pill(560, 200, 220, 48, '#fff', '결정이 생기기 시작!', 19)}</g>
     <g class="pop" ${st(5.6)}><path d="M600 252 Q560 300 480 352" fill="none" stroke="#3a86ff" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowB)"/></g>`;
@@ -450,13 +455,13 @@
     <rect x="-8" y="176" width="60" height="10" rx="4" fill="#cfd6dd" stroke="${OL}" stroke-width="3"/>`;
   const s6 = `
     ${table()}
-    ${iceBack(240, 280)}
+    ${iceBack(260)}
     ${beaker(300, 230, `
       ${liq(PROD_SOL, 100, '', .92)}
       ${liq('#3f7fe0', 74, `class="fi" ${st(1.8)}`, .9)}
       ${crystals(0, 9, 0, 0, false)}
       <g transform="translate(0 0)">${CRY_POS.slice(0, 12).map(([x, y, a], i) => needle(x + (i % 2 ? 6 : -6), y - 12 - (i % 3) * 6, a + 40, true, 2.8 + i * .18)).join('')}</g>`)}
-    ${iceFront(240, 280)}
+    ${iceFront(260)}
     <g transform="translate(560 72)"><g class="pour" ${st(.4, '--r:-62deg;--o:0% 0%')}>${cylinder}</g></g>
     <g class="fo" ${st(2.5)}><path class="draw" ${st(1.1)} pathLength="1" d="M558 74 C520 60 440 110 410 300" fill="none" stroke="#d6ecfb" stroke-width="8" stroke-linecap="round"/>
       <path d="M558 74 C520 60 440 110 410 300" fill="none" stroke="#8fb8d8" stroke-width="2" stroke-dasharray="2 10" opacity=".7"/></g>
@@ -618,13 +623,13 @@
   const scenes = [
     { html: s0, chip: '시작', title: '글리신산구리 합성', text: '아세트산구리(Ⅱ)와 글리신을 반응시켜 파란색 글리신산구리 결정을 만드는 과정을 미리 살펴봅니다.', dur: 3 },
     { html: s1, chip: '준비', title: '준비물', text: '시약은 전자저울로 정확히 재고, 비커·가열판·얼음물·감압 여과 장치를 준비합니다. 보안경과 장갑을 착용합니다.', dur: 3 },
-    { html: s2, chip: 'STEP 1–2', title: '시약 넣고 물 붓기', text: '100 mL 비커 두 개에 아세트산구리(Ⅱ) 일수화물 0.80 g과 증류수 7.5 mL, 글리신 0.65 g과 증류수 5 mL를 각각 넣습니다.', dur: 30 },
-    { html: s3, chip: 'STEP 3', title: '가열하여 녹이기', text: '두 비커를 가열판 위에 올리고 고체가 모두 녹을 때까지 끓입니다. 물이 적어 금방 졸아드니, 다 녹으면 바로 다음 단계로 넘어갑니다.', dur: 30 },
-    { html: s4, chip: 'STEP 4', title: '두 용액 섞기', text: '거의 끓는 상태에서 비커를 가열판에서 내리고, 글리신 용액을 아세트산구리 용액에 부은 뒤 유리막대로 잘 젓습니다. 용액이 진한 파란색으로 변합니다.', dur: 30 },
-    { html: s5, chip: 'STEP 5', title: '식히기', text: '실온에서 5분 정도 식힌 뒤 얼음물에 비커를 담급니다. 온도가 내려가면 연한 파란색 바늘 모양 결정이 생기기 시작합니다.', dur: 30 },
-    { html: s6, chip: 'STEP 6', title: '1-프로판올 넣기', text: '결정이 생기기 시작하면 1-프로판올 12 mL를 넣습니다. 생성물은 1-프로판올에 잘 녹지 않아서 결정이 더 많이 석출됩니다.', dur: 30 },
-    { html: s7, chip: 'STEP 7', title: '감압 여과', text: '부흐너 깔때기에 거름종이를 깔고 감압 장치로 여과합니다. 비커에 남아 있는 고체는 아세톤으로 헹궈 거름종이에 모두 모읍니다.', dur: 30 },
-    { html: s8, chip: 'STEP 8', title: '씻고 질량 재기', text: '침전물을 아세톤으로 2~3번 씻은 뒤, 미리 질량을 잰 여과지로 옮깁니다. 이론 수득량 0.92 g과 비교해 수득률을 구합니다.', dur: 30 },
+    { html: s2, chip: 'STEP 1–2', title: '시약 넣고 물 붓기', text: '50 mL 비커 두 개에 아세트산구리(Ⅱ) 일수화물 0.80 g과 증류수 7.5 mL, 글리신 0.65 g과 증류수 5 mL를 각각 넣습니다.', dur: 15 },
+    { html: s3, chip: 'STEP 3', title: '가열하여 녹이기', text: '두 비커를 가열판 위에 올리고 고체가 모두 녹을 때까지 끓입니다. 물이 적어 금방 졸아드니, 다 녹으면 바로 다음 단계로 넘어갑니다.', dur: 15 },
+    { html: s4, chip: 'STEP 4', title: '두 용액 섞기', text: '거의 끓는 상태에서 비커를 가열판에서 내리고, 글리신 용액을 아세트산구리 용액에 부은 뒤 유리막대로 잘 젓습니다. 용액이 진한 파란색으로 변합니다.', dur: 15 },
+    { html: s5, chip: 'STEP 5', title: '식히기', text: '실온에서 5분 정도 식힌 뒤 250 mL 비커에 만든 얼음물에 비커를 담급니다. 온도가 내려가면 연한 파란색 바늘 모양 결정이 생기기 시작합니다.', dur: 15 },
+    { html: s6, chip: 'STEP 6', title: '1-프로판올 넣기', text: '결정이 생기기 시작하면 1-프로판올 12 mL를 넣습니다. 생성물은 1-프로판올에 잘 녹지 않아서 결정이 더 많이 석출됩니다.', dur: 15 },
+    { html: s7, chip: 'STEP 7', title: '감압 여과', text: '부흐너 깔때기에 거름종이를 깔고 감압 장치로 여과합니다. 비커에 남아 있는 고체는 아세톤으로 헹궈 거름종이에 모두 모읍니다.', dur: 15 },
+    { html: s8, chip: 'STEP 8', title: '씻고 질량 재기', text: '침전물을 아세톤으로 2~3번 씻은 뒤, 미리 질량을 잰 여과지로 옮깁니다. 이론 수득량 0.92 g과 비교해 수득률을 구합니다.', dur: 15 },
     { html: s9, chip: '원리', title: '무엇이 만들어졌을까?', text: '글리신이 N과 O 두 자리로 구리 이온에 결합해 5원 고리(킬레이트)를 만듭니다. 이 방법으로 주로 얻는 것은 두 N이 같은 쪽에 있는 시스형입니다.', dur: 6.5 },
     { html: s10, chip: '안전', title: '안전 수칙', text: '보안경과 장갑을 착용하고 뜨거운 비커는 조심히 다룹니다. 1-프로판올과 아세톤은 인화성이므로 불꽃을 멀리하고, 구리 폐액은 지정 폐액통에 버립니다.', dur: 3.5 },
   ];
